@@ -15,6 +15,11 @@ class LoginApi:
             self,
             json_data
     ):
+        """
+        Login new user
+        :param json_data:
+        :return:
+        """
         response = requests.post(
             url=f'{self.host}/v1/account/login',
             json=json_data

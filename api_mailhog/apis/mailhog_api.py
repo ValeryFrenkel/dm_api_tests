@@ -15,6 +15,11 @@ class MailhogApi:
             self,
             limit=50
     ):
+        """
+        Get all messages
+        :param limit:
+        :return:
+        """
         params = {
             'limit': limit,
         }
