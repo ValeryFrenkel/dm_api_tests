@@ -8,7 +8,7 @@ def test_put_v1_account_token():
     #Регистрация пользователя
     account_api = AccountApi(host='http://5.63.153.31:5051')
     mailhog_api = MailhogApi(host='http://5.63.153.31:5025')
-    login = 'vfrenkel_test07'
+    login = 'vfrenkel_test15'
     password = '123456789'
     email = f'{login}@example.com'
     json_data = {
