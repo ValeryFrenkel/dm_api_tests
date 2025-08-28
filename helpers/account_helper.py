@@ -1,3 +1,4 @@
+from http.client import responses
 from json import loads
 
 from services.dm_api_account import DMApiAccount
@@ -19,6 +20,23 @@ class AccountHelper:
     ):
         self.dm_account_api = dm_account_api
         self.mailhog = mailhog
+
+    def auth_client(
+            self,
+            login: str,
+            password: str
+    ):
+        response = self.dm_account_api.login_api.post_v1_account_login(
+            json_data={
+                'login': login,
+                'password': password
+            }
+        )
+        token = {
+            "x-dm-auth-token": response.headers["x-dm-auth-token"]
+        }
+        self.dm_account_api.account_api.set_headers(token)
+        self.dm_account_api.login_api.set_headers(token)
 
     @retry(stop_max_attempt_number=5, wait_fixed=1000)
     def register_new_user(
