@@ -29,7 +29,7 @@ def test_post_v1_account_login():
     account = DMApiAccount(configuration=dm_api_configuration)
     mailhog = MailHogApi(configuration=mailhog_configuration)
     account_helper = AccountHelper(dm_account_api=account, mailhog=mailhog)
-    login = 'vfrenkel_test39'
+    login = 'vfrenkel_test65'
     password = '123456789'
     email = f'{login}@example.com'
     account_helper.register_new_user(login=login, password=password, email=email)
