@@ -49,7 +49,7 @@ def account_helper(
     return account_helper
 
 
-#@pytest.fixture(scope="session")
+@pytest.fixture#(scope="session")
 def auth_account_helper(
         mailhog_api
 ):
