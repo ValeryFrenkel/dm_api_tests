@@ -41,7 +41,6 @@ class AccountHelper:
         assert response.status_code == 200, "Пользователь не был активирован"
         return response
 
-    @retry(stop_max_attempt_number=5, wait_fixed=1000)
     def user_login(
             self,
             login: str,
@@ -57,7 +56,6 @@ class AccountHelper:
         assert response.status_code == 200, "Пользователь не смог авторизоваться"
         return response
 
-    @retry(stop_max_attempt_number=5, wait_fixed=1000)
     def change_email(
             self,
             login: str,
