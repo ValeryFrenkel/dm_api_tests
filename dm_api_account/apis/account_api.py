@@ -1,5 +1,6 @@
 import requests
 
+from dm_api_account.models.bad_request_error import BadRequestError
 from dm_api_account.models.change_email import ChangeEmail
 from dm_api_account.models.change_password import ChangePassword
 from dm_api_account.models.auth_error import AuthError
@@ -25,6 +26,8 @@ class AccountApi(RestClient):
             path='/v1/account',
             json=registration.model_dump(exclude_none=True, by_alias=True)
         )
+        if response.status_code == 400:
+            return BadRequestError(**response.json())
         return response
 
     def get_v1_account(
@@ -65,13 +68,16 @@ class AccountApi(RestClient):
             path=f'/v1/account/{token}',
             headers=headers
         )
-        if validate_response:
+        if validate_response and response.status_code == 200:
             return UserEnvelope(**response.json())
+        else:
+            return BadRequestError(**response.json())
         return response
 
     def post_v1_account_password(
             self,
-            reset_password:ResetPassword
+            reset_password:ResetPassword,
+            validate_response=True
     ):
         """
         Reset registered user password
@@ -82,11 +88,16 @@ class AccountApi(RestClient):
             path='/v1/account/password',
             json=reset_password.model_dump(exclude_none=True, by_alias=True)
         )
+        if validate_response and response.status_code == 200:
+            return UserEnvelope(**response.json())
+        else:
+            return BadRequestError(**response.json())
         return response
 
     def put_v1_account_password(
             self,
-            change_password:ChangePassword
+            change_password:ChangePassword,
+            validate_response=True
     ):
         """
         Change registered user password
@@ -97,11 +108,16 @@ class AccountApi(RestClient):
             path='/v1/account/password',
             json=change_password.model_dump(exclude_none=True, by_alias=True)
         )
+        if validate_response and response.status_code == 200:
+            return UserEnvelope(**response.json())
+        else:
+            return BadRequestError(**response.json())
         return response
 
     def put_v1_account_email(
             self,
-            change_email:ChangeEmail
+            change_email:ChangeEmail,
+            validate_response=True
     ):
         """
         Change registered user email
@@ -112,4 +128,8 @@ class AccountApi(RestClient):
             path='/v1/account/email',
             json=change_email.model_dump(exclude_none=True, by_alias=True)
         )
+        if validate_response and response.status_code == 200:
+            return UserEnvelope(**response.json())
+        else:
+            return BadRequestError(**response.json())
         return response

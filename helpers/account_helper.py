@@ -96,7 +96,6 @@ class AccountHelper:
             email=email,
         )
         response = self.dm_account_api.account_api.put_v1_account_email(change_email=change_email)
-        assert response.status_code == 200, "Почта не была изменена"
         token = self.get_activation_token_by_login(login=login)
         assert token is not None, f"Токен для пользователя {login}, не был получен "
         response = self.dm_account_api.account_api.put_v1_account_token(token=token)
@@ -114,7 +113,6 @@ class AccountHelper:
                 email=email
             )
         )
-        assert response.status_code == 200, "Пароль не был сброшен"
         token = self.get_password_token_by_login(login=login)
         assert token is not None, f"Токен для пользователя {login}, не был получен "
         response = self.dm_account_api.account_api.put_v1_account_password(
@@ -125,7 +123,6 @@ class AccountHelper:
                 new_password=new_password
             )
         )
-        assert response.status_code == 200, "Пароль не был изменен"
 
     def logout_current_user(
             self

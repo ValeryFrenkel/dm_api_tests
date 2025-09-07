@@ -45,4 +45,4 @@ class User(BaseModel):
 class UserEnvelope(BaseModel):
     model_config = ConfigDict(extra="forbid")
     resource: Optional[User] = None
-    metadata: Optional[str] = None
+    metadata: Optional[dict] = None
