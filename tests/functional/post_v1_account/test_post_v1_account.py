@@ -1,5 +1,6 @@
 from datetime import datetime
 
+import pytest
 from hamcrest import (
     assert_that,
     has_property,
@@ -9,6 +10,8 @@ from hamcrest import (
     has_properties,
     equal_to,
 )
+
+from checkers.http_checkers import check_status_code_http
 
 
 def test_post_v1_account(
@@ -40,3 +43,41 @@ def test_post_v1_account(
         )
     )
     print(response)
+
+
+@pytest.mark.parametrize(
+    "payload, expected_error",
+    [
+        (
+                {
+                    "login": "valid_user",
+                    "email": "user@example.com",
+                    "password": "123"
+                },
+                "Validation failed"
+        ),
+        (
+                {
+                    "login": "valid_user",
+                    "email": "userexample.com",
+                    "password": "123456"
+                },
+                "Validation failed"
+        ),
+        (
+                {
+                    "login": "a",
+                    "email": "user@example.com",
+                    "password": "123456"
+                },
+                "Validation failed"
+        ),
+    ]
+)
+def test_post_v1_account_wrong_credentials(
+        account_helper,
+        payload,
+        expected_error,
+):
+    with check_status_code_http(400, expected_error):
+        account_helper.register_new_user(login=payload['login'],password=payload['password'], email=payload['email'])
