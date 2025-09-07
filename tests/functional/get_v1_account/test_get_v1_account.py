@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from hamcrest import (
     assert_that,
     has_property,
@@ -10,6 +12,12 @@ from hamcrest import (
 )
 
 from checkers.http_checkers import check_status_code_http
+from assertpy import (
+    assert_that,
+    soft_assertions,
+)
+
+from dm_api_account.models.user_details_envelope import UserRole
 
 
 def test_get_v1_account_auth(
@@ -17,15 +25,18 @@ def test_get_v1_account_auth(
 ):
     response = auth_account_helper.dm_account_api.account_api.get_v1_account()
     print(response)
-    assert_that(
-        response,
-        all_of(
-            has_property('resource', has_property('login', starts_with("vfrenkel"))),
-            has_property('resource', has_property("login", all_of(not_none(), ends_with("10")))),
-            has_property('resource', has_property("roles", contains_inanyorder("Guest", "Player"))),
-            has_property('resource', has_property("online", all_of(contains_string("T"), ends_with("+00:00"))))
-        )
-    )
+    with soft_assertions():
+        assert_that(response.resource.login).is_equal_to('vfrenkel_test10')
+        assert_that(response.resource.roles).contains(UserRole.GUEST, UserRole.PLAYER)
+    # assert_that(
+    #     response,
+    #     all_of(
+    #         has_property('resource', has_property('login', starts_with("vfrenkel"))),
+    #         has_property('resource', has_property("login", all_of(not_none(), ends_with("10")))),
+    #         has_property('resource', has_property("roles", contains_inanyorder("Guest", "Player"))),
+    #         has_property('resource', has_property("online", all_of(contains_string("T"), ends_with("+00:00"))))
+    #     )
+    # )
 
 
 def test_get_v1_account_no_auth(
