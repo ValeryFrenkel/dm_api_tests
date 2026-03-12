@@ -1,5 +1,8 @@
 import requests
 
+from dm_api_account.models.auth_error import AuthError
+from dm_api_account.models.login_credentials import LoginCredentials
+from dm_api_account.models.user_envelope import UserEnvelope
 from restclient.client import RestClient
 
 
@@ -7,17 +10,19 @@ class LoginApi(RestClient):
 
     def post_v1_account_login(
             self,
-            json_data
+            login_credentials: LoginCredentials,
+            validate_response=True
     ):
         """
         Login new user
-        :param json_data:
         :return:
         """
         response = self.post(
             path='/v1/account/login',
-            json=json_data
+            json=login_credentials.model_dump(exclude_none=True, by_alias=True)
         )
+        if validate_response:
+            return UserEnvelope(**response.json())
         return response
 
     def delete_v1_account_login(
@@ -32,6 +37,8 @@ class LoginApi(RestClient):
             path='/v1/account/login',
             **kwargs
         )
+        if response.status_code == 401:
+            return AuthError(**response.json())
         return response
 
     def delete_v1_account_login_all(
@@ -46,4 +53,6 @@ class LoginApi(RestClient):
             path='/v1/account/login/all',
             **kwargs
         )
+        if response.status_code == 401:
+            return AuthError(**response.json())
         return response

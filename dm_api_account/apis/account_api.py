@@ -1,5 +1,13 @@
 import requests
 
+from dm_api_account.models.bad_request_error import BadRequestError
+from dm_api_account.models.change_email import ChangeEmail
+from dm_api_account.models.change_password import ChangePassword
+from dm_api_account.models.auth_error import AuthError
+from dm_api_account.models.registration import Registration
+from dm_api_account.models.reset_password import ResetPassword
+from dm_api_account.models.user_details_envelope import UserDetailsEnvelope
+from dm_api_account.models.user_envelope import UserEnvelope
 from restclient.client import RestClient
 
 
@@ -7,22 +15,24 @@ class AccountApi(RestClient):
 
     def post_v1_account(
             self,
-            json_data
+            registration: Registration
     ):
         """
         Register new user
-        :param json_data:
         :return:
         """
 
         response = self.post(
             path='/v1/account',
-            json=json_data
+            json=registration.model_dump(exclude_none=True, by_alias=True)
         )
+        if response.status_code == 400:
+            return BadRequestError(**response.json())
         return response
 
     def get_v1_account(
             self,
+            validate_response=True,
             **kwargs
     ):
         """
@@ -34,11 +44,16 @@ class AccountApi(RestClient):
             path='/v1/account',
             **kwargs
         )
+        if validate_response and response.status_code == 200:
+            return UserDetailsEnvelope(**response.json())
+        else:
+            return AuthError(**response.json())
         return response
 
     def put_v1_account_token(
             self,
-            token
+            token,
+            validate_response=True
     ):
         """
         Activate registered user
@@ -53,11 +68,16 @@ class AccountApi(RestClient):
             path=f'/v1/account/{token}',
             headers=headers
         )
+        if validate_response and response.status_code == 200:
+            return UserEnvelope(**response.json())
+        else:
+            return BadRequestError(**response.json())
         return response
 
     def post_v1_account_password(
             self,
-            json_data
+            reset_password:ResetPassword,
+            validate_response=True
     ):
         """
         Reset registered user password
@@ -66,13 +86,18 @@ class AccountApi(RestClient):
 
         response = self.post(
             path='/v1/account/password',
-            json=json_data
+            json=reset_password.model_dump(exclude_none=True, by_alias=True)
         )
+        if validate_response and response.status_code == 200:
+            return UserEnvelope(**response.json())
+        else:
+            return BadRequestError(**response.json())
         return response
 
     def put_v1_account_password(
             self,
-            json_data
+            change_password:ChangePassword,
+            validate_response=True
     ):
         """
         Change registered user password
@@ -81,22 +106,30 @@ class AccountApi(RestClient):
 
         response = self.put(
             path='/v1/account/password',
-            json=json_data
+            json=change_password.model_dump(exclude_none=True, by_alias=True)
         )
+        if validate_response and response.status_code == 200:
+            return UserEnvelope(**response.json())
+        else:
+            return BadRequestError(**response.json())
         return response
 
     def put_v1_account_email(
             self,
-            json_data
+            change_email:ChangeEmail,
+            validate_response=True
     ):
         """
         Change registered user email
-        :param json_data:
         :return:
         """
 
         response = self.put(
             path='/v1/account/email',
-            json=json_data
+            json=change_email.model_dump(exclude_none=True, by_alias=True)
         )
+        if validate_response and response.status_code == 200:
+            return UserEnvelope(**response.json())
+        else:
+            return BadRequestError(**response.json())
         return response
