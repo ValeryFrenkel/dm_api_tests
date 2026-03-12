@@ -1,4 +1,5 @@
 import time
+import token
 from http.client import responses
 from json import loads
 
@@ -147,6 +148,7 @@ class AccountHelper:
             user_login = user_data['Login']
             if user_login == login:
                 token = user_data['ConfirmationLinkUrl'].split('/')[-1]
+                print(token)
         return token
 
     def get_password_token_by_login(

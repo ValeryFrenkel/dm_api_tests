@@ -6,7 +6,6 @@ def test_get_v1_account_auth(
         auth_account_helper
 ):
     response = auth_account_helper.dm_account_api.account_api.get_v1_account()
-    print(response)
     GetV1Account.check_response_values(response)
 
 
